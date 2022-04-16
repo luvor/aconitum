@@ -1,20 +1,19 @@
 <template>
-  <div class="OrgStuctureTable">
-    <table v-if="data" class="OrgStuctureTable__table noselect">
-      <tr>
-        <th class="OrgStuctureTable__th"></th>
-        <th class="OrgStuctureTable__th">Общее количество</th>
-        <th class="OrgStuctureTable__th">Фактическое количество</th>
-        <th class="OrgStuctureTable__th">Действия</th>
-      </tr>
-      <OrgStructureTableItem
-        v-for="(value, name) in data"
-        :key="name"
-        :name="name"
-        :self="value['Данные']"
-        :children="value['Подразделения']"
-      />
-    </table>
+  <div class="OrgStructureTable noselect">
+    <div class="OrgStructureTable__header">
+      <div class="OrgStructureTable__headerItem"></div>
+      <div class="OrgStructureTable__headerItem">Общее количество</div>
+      <div class="OrgStructureTable__headerItem">Фактическое количество</div>
+      <div class="OrgStructureTable__headerItem">Действия</div>
+    </div>
+    <OrgStructureTableItem
+      v-for="(v, n) in data"
+      :key="n"
+      :id="n"
+      :name="n"
+      :self="v['Данные']"
+      :children="v['Подразделения']"
+    />
   </div>
 </template>
 <script>
@@ -30,28 +29,29 @@ export default {
   components: {
     OrgStructureTableItem,
   },
-
   mounted() {
     // console.log(this.data);
   },
 };
 </script>
 <style lang="scss">
-.OrgStuctureTable {
+.OrgStructureTable {
   margin-top: 1rem;
   &__table {
-    border-collapse: collapse;
     width: 100%;
   }
-  &__th {
-    padding: 10px;
+  &__header {
+    display: flex;
+    justify-content: flex-end;
     background-color: #2d3e50;
     color: #fff;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    font-weight: 400;
-    border-right: 1px solid #fff;
     text-align: left;
+    &Item {
+      min-width: fit-content;
+      padding: 15px 2em;
+      text-align: left;
+      border-right: 1px solid #fff;
+    }
   }
 }
 </style>

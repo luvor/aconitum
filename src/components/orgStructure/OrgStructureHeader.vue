@@ -1,10 +1,10 @@
 <template>
-  <div class="OrgStuctureHeader">
-    <div class="OrgStuctureHeader__title">
+  <div class="OrgStructureHeader">
+    <div class="OrgStructureHeader__title">
       <p>{{ title }}</p>
     </div>
-    <div class="OrgStuctureHeader__actions">
-      <button class="OrgStuctureHeader__button">
+    <div class="OrgStructureHeader__actions">
+      <button class="OrgStructureHeader__button">
         <svg width="1em" height="1em" viewBox="0 0 24 24">
           <path
             fill="currentColor"
@@ -28,7 +28,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.OrgStuctureHeader {
+.OrgStructureHeader {
   &__title {
     display: flex;
     justify-content: space-between;
