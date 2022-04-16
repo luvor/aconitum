@@ -8,7 +8,7 @@
     <div class="OrgStructureTableItem__self">
       <div class="OrgStructureTableItem__label">
         <svg
-          v-if="self['Подразделения']"
+          v-if="!Object.keys(self).includes('Общее количество')"
           class="OrgStructureTableItem__chevron"
           width="1.5em"
           height="1.5em"
@@ -27,8 +27,11 @@
       <div class="OrgStructureTableItem__actual">
         {{ people.actual }}
       </div>
-      <div class="OrgStructureTableItem__actions">
-        <button class="OrgStructureTableItem__actions-edit">
+      <div v-if="people.total > 0" class="OrgStructureTableItem__actions">
+        <button
+          @click.stop="openEditEntryModal"
+          class="OrgStructureTableItem__actions-edit"
+        >
           <svg width="2em" height="2em" viewBox="0 0 24 24">
             <path
               fill="currentColor"
@@ -47,11 +50,15 @@
             ></path>
           </svg>
         </button>
+        <EditEntryModal :id="id" :initialVals="people" ref="modal" />
       </div>
     </div>
-    <div v-if="self['Подразделения']" class="OrgStructureTableItem__children">
+    <div
+      v-if="!Object.keys(self).includes('Общее количество')"
+      class="OrgStructureTableItem__children"
+    >
       <OrgStructureTableItem
-        v-for="(v, n) in self['Подразделения']"
+        v-for="(v, n) in self"
         :key="name + '_' + n"
         :id="id + ',' + n"
         :name="n"
@@ -61,7 +68,9 @@
   </div>
 </template>
 <script>
+import EditEntryModal from "../EditEntryModal.vue";
 export default {
+  components: { EditEntryModal },
   name: "OrgStructureTableItem",
   data() {
     return {
@@ -86,58 +95,50 @@ export default {
     },
   },
   methods: {
+    openEditEntryModal() {
+      this.$refs.modal.show = true;
+    },
     deleteKey(e) {
       e.preventDefault();
-      const propsArray = this.id.split(",").map((v) => v.trim());
-      console.log(propsArray);
-      this.$store.commit("deleteKey", propsArray);
+      this.$store.commit("deleteKey", this.id);
     },
-
     handleUnwrap(id) {
       const t = this.$refs[id];
-      //   console.log(t);
-      if (t.getAttribute("class") === "OrgStructureTableItem") {
-        t.setAttribute(
-          "class",
-          "OrgStructureTableItem OrgStructureTableItem-active"
-        );
-      } else {
-        t.setAttribute("class", "OrgStructureTableItem");
+      if (t) {
+        if (t.getAttribute("class") === "OrgStructureTableItem") {
+          t.setAttribute(
+            "class",
+            "OrgStructureTableItem OrgStructureTableItem-active"
+          );
+        } else {
+          t.setAttribute("class", "OrgStructureTableItem");
+        }
       }
     },
-    countTreeEntries(data) {
-      let count = {
-        total: 0,
-        actual: 0,
-      };
-      Object.entries(data).forEach(([key, value]) => {
-        if (key === "Данные") {
-          count.total += value["Общее количество"];
-          count.actual += value["Фактическое количество"];
-        } else {
-          count.total += this.countTreeEntries(value).total;
-          count.actual += this.countTreeEntries(value).actual;
-        }
-      });
+    countTreeEntries(data, count) {
+      if (Object.getOwnPropertyNames(data).includes("Общее количество")) {
+        count.total += data["Общее количество"];
+        count.actual += data["Фактическое количество"];
+      } else {
+        Object.keys(data).forEach((key) => {
+          count = {
+            ...count,
+            ...this.countTreeEntries(data[key], count),
+          };
+        });
+      }
       return count;
     },
     countPeople(data) {
       let count = 0;
-      if (data && typeof data === "object") {
-        count = this.countTreeEntries(data);
+      if (data) {
+        count = this.countTreeEntries(data, { total: 0, actual: 0 });
       }
-      // console.log("каунт", count);
       this.people = count;
     },
   },
   mounted() {
-    // console.log(this.name);
-    if (!this.self["Данные"]) {
-      this.countPeople(this.self["Подразделения"]);
-    } else {
-      this.people.total = this.self["Данные"]["Общее количество"];
-      this.people.actual = this.self["Данные"]["Фактическое количество"];
-    }
+    this.countPeople(this.self);
   },
 };
 </script>

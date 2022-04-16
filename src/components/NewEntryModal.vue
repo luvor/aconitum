@@ -46,7 +46,7 @@
                 <input v-model="entry.actual" type="number" id="actualInp" />
               </div>
             </div>
-            <!-- <div class="newEntryModal__level newEntryModal__inputGroup">
+            <div class="newEntryModal__level newEntryModal__inputGroup">
               <label for="levelInp">Ключ вложения</label>
               <p class="newEntryModal__level-caption">
                 *для главного раздела введите 0
@@ -57,7 +57,7 @@
                 type="text"
                 placeholder="Алматы, Управление 1"
               />
-            </div> -->
+            </div>
             <button class="newEntryModal__submit" type="submit">
               Отправить
             </button>
@@ -88,20 +88,27 @@ export default {
       this.show = false;
     },
     handleSubmit() {
-      this.$store.commit("addKey", {
-        name: this.name,
-        entry: {
-          Данные: {
-            "Общее количество": this.entry.total,
-            "Фактическое количество": this.entry.actual,
+      if (!this.isEmpty) {
+        this.$store.commit("addKey", {
+          name: this.name,
+          entry: {
+            "Общее количество": Number(this.entry.total),
+            "Фактическое количество": Number(this.entry.actual),
           },
-        },
-        level: this.level,
-      });
-      console.log("AAA");
-      this.name = "";
-      this.show = false;
-      this.closeModal();
+          level: this.level,
+        });
+        this.name = "";
+        this.show = false;
+        this.closeModal();
+      } else {
+        this.$store.commit("addKey", {
+          name: this.name,
+          level: this.level,
+        });
+        this.name = "";
+        this.show = false;
+        this.closeModal();
+      }
     },
   },
 };
