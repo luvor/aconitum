@@ -10,9 +10,8 @@
       v-for="(v, n) in data"
       :key="n"
       :id="n"
+      :self="v"
       :name="n"
-      :self="v['Данные']"
-      :children="v['Подразделения']"
     />
   </div>
 </template>
@@ -30,16 +29,14 @@ export default {
     OrgStructureTableItem,
   },
   mounted() {
-    // console.log(this.data);
+    // console.log(Object(this.data));
   },
 };
 </script>
 <style lang="scss">
 .OrgStructureTable {
   margin-top: 1rem;
-  &__table {
-    width: 100%;
-  }
+  width: 100%;
   &__header {
     display: flex;
     justify-content: flex-end;
@@ -47,8 +44,8 @@ export default {
     color: #fff;
     text-align: left;
     &Item {
-      min-width: fit-content;
       padding: 15px 2em;
+      width: 240px;
       text-align: left;
       border-right: 1px solid #fff;
     }

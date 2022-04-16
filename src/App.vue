@@ -11,9 +11,12 @@ export default {
   components: {
     OrgStructure,
   },
+  mounted() {
+    this.$store.dispatch("fetchData");
+  },
 };
 </script>
 
 <style>
-@import "./assets/css/index.css";
+@import "./assets/css/index.scss";
 </style>

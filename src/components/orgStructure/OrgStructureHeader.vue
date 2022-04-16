@@ -4,7 +4,7 @@
       <p>{{ title }}</p>
     </div>
     <div class="OrgStructureHeader__actions">
-      <button class="OrgStructureHeader__button">
+      <button class="OrgStructureHeader__button" @click="openNewEntryModal">
         <svg width="1em" height="1em" viewBox="0 0 24 24">
           <path
             fill="currentColor"
@@ -14,11 +14,19 @@
         Добавить
       </button>
     </div>
+    <NewEntryModal ref="modal"></NewEntryModal>
   </div>
 </template>
 <script>
+import NewEntryModal from "@/components/NewEntryModal.vue";
 export default {
   name: "OrgStructureHeader",
+  components: { NewEntryModal },
+  methods: {
+    openNewEntryModal() {
+      this.$refs.modal.show = true;
+    },
+  },
   props: {
     title: {
       type: String,
@@ -28,13 +36,14 @@ export default {
 };
 </script>
 <style lang="scss">
+@import "../../assets/css/index.scss";
 .OrgStructureHeader {
   &__title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #2d3e50;
+    background-color: $prim;
     color: #fff;
     text-transform: uppercase;
     margin-bottom: 1rem;
